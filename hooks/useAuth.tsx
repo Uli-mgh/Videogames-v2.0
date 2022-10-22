@@ -32,10 +32,28 @@ const AuthContext = createContext<IAuth>({
   loading: false,
 });
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState(null);
   const router = useRouter();
+
+  useEffect(
+    () =>
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user);
+          setLoading(false);
+        } else {
+          setUser(null);
+          setLoading(true);
+          // router.push("/login");
+        }
+        setInitialLoading(false);
+      }),
+    [auth]
+  );
 
   const signUp = async (email: string, password: string) => {
     setLoading(true);
@@ -71,7 +89,25 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       .finally(() => setLoading(false));
   };
 
-  return <AuthContext.Provider>{children}</AuthContext.Provider>;
+  const memo = useMemo(
+    () => ({
+      loading,
+      user,
+      signIn,
+      signUp,
+      logout,
+      error,
+    }),
+    [user, loading]
+  );
+
+  return (
+    <AuthContext.Provider value={memo}>
+      {!initialLoading && children}
+    </AuthContext.Provider>
+  );
 };
 
-export default AuthProvider;
+export default function useAuth() {
+  return useContext(AuthContext);
+}

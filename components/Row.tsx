@@ -1,14 +1,15 @@
 import React, { useRef, useState } from "react";
-import { Games } from "../typings";
+import { Movie } from "../typings";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import Thumbnail from "./Thumbnail";
+import { DocumentData } from "firebase/firestore";
 
 interface Props {
-  allGames: Games[];
   title: string;
+  movies: Movie[] | DocumentData[];
 }
 
-const Row = ({ title, allGames }: Props) => {
+const Row = ({ title, movies }: Props) => {
   const rowRef = useRef<HTMLDivElement>(null);
   const [isMoved, setIsMoved] = useState(false);
 
@@ -45,8 +46,8 @@ const Row = ({ title, allGames }: Props) => {
           ref={rowRef}
           className="flex scrollbar-hide items-center space-x-0.5 overflow-x-scroll md:space-x-2.5 md:p-2 "
         >
-          {allGames.map((game) => (
-            <Thumbnail key={game.id} game={game} />
+          {movies.map((movie) => (
+            <Thumbnail key={movie.id} movie={movie} />
           ))}
         </div>
 
