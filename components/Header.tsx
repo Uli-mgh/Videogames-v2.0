@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 
 import { BellIcon, SearchIcon } from "@heroicons/react/solid";
 import Link from "next/link";
+import useAuth from "../hooks/useAuth";
 
 type Props = {};
 
 export default function Header({}: Props) {
   const [scroll, setScroll] = useState(false);
+  const { logout, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,18 +48,22 @@ export default function Header({}: Props) {
       {/* Right section */}
       <div className="flex items-center space-x-4 text-sm  font-light">
         <SearchIcon className="h-6 w-6 sm:inline " />
-        <p className="hidden lg:inline">RAWG</p>
+        {/* <p className="hidden lg:inline">RAWG</p> */}
         <BellIcon className="h-6 w-6 sm:inline " />
-
-        <Link href="/account">
-          <img
+        {user ? (
+          <button onClick={logout}>Logout</button>
+        ) : (
+          <Link href="/login">
+            {/* <img
             src="https://icones.pro/wp-content/uploads/2022/05/icone-steam.png"
             alt=""
             className="cursor-pointer rounded"
             width={30}
             height={30}
-          />
-        </Link>
+          /> */}
+            <button>Login</button>
+          </Link>
+        )}
       </div>
     </header>
   );
