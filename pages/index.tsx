@@ -7,13 +7,15 @@ import requests from "../utils/requests";
 
 //TYPES
 
+import useList from "../hooks/useList";
 import useAuth from "../hooks/useAuth";
-import { modalState } from "../atoms/modalAtom";
+import { modalState, movieState } from "../atoms/modalAtom";
 
 // Recoil
 import { useRecoilValue } from "recoil";
 import Modal from "../components/Modal";
 import { Movie } from "../typings";
+// import { useRouter } from "next/router";
 
 interface Props {
   netflixOriginals: Movie[];
@@ -40,13 +42,16 @@ const Home = ({
   const { user, loading } = useAuth();
   // const movie = useRecoilValue(movieState);
   const showModal = useRecoilValue(modalState);
+  const movie = useRecoilValue(movieState);
+  const list = useList(user?.uid);
+  // const router = useRouter();
 
   if (loading) return null;
 
   return (
     <div className="relative h-screen lg:h-[140vh] 	 ">
       <Head>
-        <title>Videogames Remaster</title>
+        <title> {movie?.title || movie?.original_name || "Home"} </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {/* Header */}
@@ -56,11 +61,13 @@ const Home = ({
         <Banner netflixOriginals={netflixOriginals} />
 
         <section className="md:space-y-24">
+          {/* My List */}
+          {list.length > 0 && <Row title="My List" movies={list} />}
+          {/* My List */}
+
           <Row title="Trending Now" movies={trendingNow} />
           <Row title="Top Rated" movies={topRated} />
           <Row title="Action Thrillers" movies={actionMovies} />
-          {/* My List */}
-          {/* {list.length > 0 && <Row title="My List" movies={list} />} */}
 
           <Row title="Comedies" movies={comedyMovies} />
           <Row title="Scary Movies" movies={horrorMovies} />

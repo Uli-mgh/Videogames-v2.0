@@ -6,6 +6,8 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
   User,
 } from "firebase/auth";
 import { auth } from "../firebase";
@@ -17,6 +19,7 @@ interface IAuth {
   logout: () => Promise<void>;
   error: string | null;
   loading: boolean;
+  loginWithGoogle: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -28,6 +31,7 @@ const AuthContext = createContext<IAuth>({
   signUp: async () => {},
   signIn: async () => {},
   logout: async () => {},
+  loginWithGoogle: async () => {},
   error: null,
   loading: false,
 });
@@ -48,7 +52,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
           setUser(null);
           setLoading(true);
-          // router.push("/login");
+          router.push("/login");
         }
         setInitialLoading(false);
       }),
@@ -65,6 +69,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       })
       .catch((error) => alert(error.message))
       .finally(() => setLoading(false));
+  };
+  const loginWithGoogle = async () => {
+    setLoading(true);
+    const googleProvider = new GoogleAuthProvider();
+    await signInWithPopup(auth, googleProvider);
+    router.push("/");
+    setLoading(false);
   };
 
   const signIn = async (email: string, password: string) => {
@@ -95,6 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       user,
       signIn,
       signUp,
+      loginWithGoogle,
       logout,
       error,
     }),

@@ -81,7 +81,7 @@ const Modal = () => {
   useEffect(() => {
     if (user) {
       return onSnapshot(
-        collection(db, "customers", user.uid, "myList"),
+        collection(db, "customers", user?.uid, "myList"),
         (snapshot) => setMovies(snapshot.docs)
       );
     }
@@ -127,7 +127,7 @@ const Modal = () => {
     }
   };
 
-  console.log(muted);
+  // console.log(muted);
 
   return (
     <MuiModal
